@@ -2,6 +2,27 @@
 
 A 100% browser-based, dependency-free **Intel 80486DX2-66 PC, Motherboard & Modular ISA/VLB Adapter Card Emulator** written in pure ES6 JavaScript. Runs real unmodified **SeaBIOS**, **VGA BIOS**, **FreeDOS 1.3**, and classic DOS games (Commander Keen 4, Wolfenstein 3D, Duke Nukem II, DOOM) directly in the browser.
 
+---
+
+## Screenshots
+
+### 🖥️ CRT Monitor & FreeDOS 1.3 Boot
+![CRT Monitor & FreeDOS 1.3](docs/screenshots/crt-monitor.png)
+
+### 🔌 Interactive 486 VLB/ISA Motherboard & Expansion Slots
+![486 Motherboard & Slots](docs/screenshots/motherboard.png)
+
+### 💾 Storage Bay & Pre-Bundled Disk Library
+![Storage Bay & Disk Library](docs/screenshots/storage-bay.png)
+
+### 🛠️ Custom ISA/VLB Adapter Card Studio & Test Bench
+![Custom Card Studio](docs/screenshots/card-studio.png)
+
+### ⚙️ Live 80486 CPU Registers & Physical Memory Hex Inspector
+![System & Diagnostics](docs/screenshots/system-diagnostics.png)
+
+---
+
 ## Features
 
 - **Full Intel 80486DX2 CPU + 80487 FPU (`js/cpu_486.js`, `js/fpu_487.js`)**
@@ -58,5 +79,6 @@ npm test
 │   └── ui/                 # Motherboard, Storage Bay & Card Editor views
 ├── data/                   # SeaBIOS (bios.bin), VGA BIOS (vgabios.bin), FreeDOS 1.3 (dos.img)
 ├── extra_disks/            # Pre-bundled 1.44MB DOS game & utility floppy images
+├── docs/screenshots/       # UI screenshots for documentation
 └── tests/                  # Node.js unit test suites
 ```
