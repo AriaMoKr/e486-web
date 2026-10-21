@@ -1,0 +1,459 @@
+/* ==========================================================================
+   Retro486 Browser Emulator - Core Layout & CRT Monitor Styles
+   ========================================================================== */
+
+:root {
+    --bg-dark: #0e1116;
+    --bg-panel: #171c24;
+    --bg-card: #1f2631;
+    --bezel-plastic: #2b3038;
+    --bezel-inner: #181b20;
+    --accent-green: #00ff66;
+    --accent-amber: #ffaa00;
+    --accent-cyan: #33ccff;
+    --accent-red: #ff4444;
+    --text-primary: #e6edf3;
+    --text-muted: #8b949e;
+    --border-color: #30363d;
+    --led-off: #222a24;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Top System Header & Navigation Tabs
+   ========================================================================== */
+
+#top-header {
+    background: #13171e;
+    border-bottom: 2px solid var(--border-color);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.brand-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cpu-badge {
+    background: linear-gradient(135deg, #1f4e3d, #0f291e);
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+}
+
+.system-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.top-telemetry {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    background: #0b0e12;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid #262c36;
+}
+
+.post-pill {
+    background: #2a1215;
+    color: #ff5555;
+    border: 1px solid #661e26;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+#nav-tabs-bar {
+    background: #161b22;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    flex-wrap: wrap;
+}
+
+.nav-tabs-left {
+    display: flex;
+    gap: 4px;
+}
+
+.nav-tab-btn {
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.nav-tab-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-tab-btn.active {
+    color: var(--accent-green);
+    border-bottom-color: var(--accent-green);
+    background: rgba(0, 255, 102, 0.06);
+}
+
+.nav-actions-right {
+    display: flex;
+    gap: 8px;
+    padding: 6px 0;
+}
+
+/* ==========================================================================
+   Tab Panes Container
+   ========================================================================== */
+
+#main-workspace {
+    flex: 1;
+    padding: 20px;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.tab-pane {
+    display: none;
+    animation: fadeIn 0.15s ease-in-out;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(3px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Tab 1: Period-Correct CRT Monitor View
+   ========================================================================== */
+
+.monitor-workspace {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+#monitor-bezel {
+    background: linear-gradient(145deg, #323741, #22262e);
+    padding: 36px 44px 24px 44px;
+    border-radius: 22px;
+    border: 4px solid #434a56;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.85),
+        inset 0 2px 4px rgba(255, 255, 255, 0.12),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 880px;
+    width: 100%;
+}
+
+.crt-frame-inner {
+    background: #000000;
+    padding: 0;
+    border-radius: 16px;
+    border: 6px solid #1a1d24;
+    box-shadow: inset 0 0 32px #000;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#screen {
+    width: 100%;
+    max-width: 760px;
+    aspect-ratio: 4 / 3;
+    background: #000000;
+    border-radius: 10px;
+    cursor: default;
+    display: block;
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.08);
+}
+
+.monitor-control-strip {
+    width: 100%;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #3a404c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.bezel-badge-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    color: #b0b8c4;
+}
+
+.crt-knobs-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+}
+
+.knob-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #1b1f26;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #323844;
+}
+
+.knob-item input[type="range"] {
+    width: 65px;
+    accent-color: var(--accent-green);
+    cursor: pointer;
+}
+
+.btn-power-switch {
+    background: #2b1d1d;
+    border: 2px solid #633333;
+    color: #ffaaaa;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.btn-power-switch.active {
+    background: #163826;
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+/* ==========================================================================
+   Common Buttons, Badges, LEDs, & Inputs
+   ========================================================================== */
+
+button {
+    background: #21262d;
+    color: var(--text-primary);
+    border: 1px solid #38414d;
+    padding: 7px 13px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+button:hover {
+    background: #2c333d;
+    border-color: var(--accent-green);
+    color: #fff;
+}
+
+.btn-accent {
+    background: #133926;
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+    font-weight: bold;
+}
+
+.btn-accent:hover {
+    background: var(--accent-green);
+    color: #09130c;
+}
+
+.btn-danger {
+    background: #3b181b;
+    color: #ff7b72;
+    border-color: #8c2d33;
+}
+
+.btn-danger:hover {
+    background: #ff4444;
+    color: #fff;
+}
+
+.btn-small {
+    padding: 4px 9px;
+    font-size: 11px;
+}
+
+.retro-select, input[type="text"] {
+    background: #0d1117;
+    color: var(--text-primary);
+    border: 1px solid #38414d;
+    padding: 7px 10px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.led {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--led-off);
+    display: inline-block;
+    vertical-align: middle;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+    transition: background 0.06s, box-shadow 0.06s;
+}
+
+.led.active {
+    background: var(--led-on, #00ff66);
+    box-shadow: 0 0 8px var(--led-on, #00ff66);
+}
+
+.badge {
+    background: #262f3d;
+    color: var(--accent-cyan);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    border: 1px solid #3b495e;
+}
+
+/* ==========================================================================
+   Tab 4: Custom Card Studio (IDE & Test Harness)
+   ========================================================================== */
+
+.studio-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 960px) {
+    .studio-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.studio-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#studio-code-editor {
+    width: 100%;
+    min-height: 410px;
+    background: #090c10;
+    color: #a5d6ff;
+    border: 1px solid #2d3540;
+    border-radius: 6px;
+    padding: 14px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.45;
+    resize: vertical;
+}
+
+.harness-led-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: #0d1117;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #282f3a;
+}
+
+.harness-led-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    background: #161c24;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   Tab 5: System Specs & Register Diagnostics
+   ========================================================================== */
+
+.reg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.reg-box {
+    background: #0d1117;
+    border: 1px solid #28303d;
+    padding: 8px 12px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.reg-box span {
+    color: var(--text-muted);
+}
+
+.reg-box b {
+    color: var(--accent-green);
+}
+
+.hex-dump-box {
+    background: #090c10;
+    color: #7ee787;
+    border: 1px solid #28303d;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre;
+}

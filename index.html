@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro486 - Modular In-Browser 80486 PC & Motherboard Emulator</title>
+    <link rel="stylesheet" href="css/emulator.css">
+    <link rel="stylesheet" href="css/motherboard.css">
+    <link rel="stylesheet" href="css/storage.css">
+</head>
+<body>
+
+    <!-- ====================================================================
+         TOP SYSTEM HEADER & LIVE TELEMETRY
+         ==================================================================== -->
+    <header id="top-header">
+        <div class="brand-box">
+            <span class="cpu-badge">Intel i486DX2-66</span>
+            <span class="system-title">Retro486 Modular Browser PC</span>
+            <span class="badge" id="active-video-badge">VGA 256KB</span>
+        </div>
+
+        <div class="top-telemetry">
+            <span>PWR <span class="led active" style="--led-on:#00ff66"></span></span>
+            <span>POST <span class="post-pill" id="top-post-code">FF</span></span>
+            <span>RAM: <b>16 MB SIMM</b></span>
+            <span id="fps-display" style="color:var(--accent-green); font-weight:bold;">60 FPS</span>
+            <a href="esp32_console.html" style="color:var(--accent-cyan); text-decoration:none; font-size:11px; border:1px solid #30455c; padding:3px 8px; border-radius:4px;">📡 ESP32 Remote Console</a>
+        </div>
+    </header>
+
+    <!-- ====================================================================
+         MAIN NAVIGATION TABS BAR
+         ==================================================================== -->
+    <nav id="nav-tabs-bar">
+        <div class="nav-tabs-left">
+            <button class="nav-tab-btn active" data-tab="tab-monitor">🖥️ CRT Monitor</button>
+            <button class="nav-tab-btn" data-tab="tab-motherboard">🔌 Motherboard & Slots</button>
+            <button class="nav-tab-btn" data-tab="tab-storage">💾 Storage Bay</button>
+            <button class="nav-tab-btn" data-tab="tab-studio">🛠️ Custom Card Studio</button>
+            <button class="nav-tab-btn" data-tab="tab-system">⚙️ System & Diagnostics</button>
+        </div>
+
+        <div class="nav-actions-right">
+            <button id="btn-audio-mute">🔊 Audio On</button>
+            <button id="btn-reboot" class="btn-danger">🔄 Cold Reset PC</button>
+        </div>
+    </nav>
+
+    <!-- ====================================================================
+         MAIN WORKSPACE PANES
+         ==================================================================== -->
+    <main id="main-workspace">
+
+        <!-- ================================================================
+             TAB 1: PERIOD-CORRECT CRT MONITOR VIEW
+             ================================================================ -->
+        <section id="tab-monitor" class="tab-pane active">
+            <div class="monitor-workspace">
+                <div id="monitor-bezel">
+                    <div class="crt-frame-inner">
+                        <canvas id="screen" width="640" height="400"></canvas>
+                    </div>
+
+                    <div class="monitor-control-strip">
+                        <div class="bezel-badge-group">
+                            <span><b>IBM 8514 / Multisync CRT</b></span>
+                            <span>A: <b id="bezel-floppy-name" style="color:var(--accent-amber)">FREEDOS_13.IMG</b></span>
+                            <span>C: <b id="bezel-hdd-name" style="color:var(--accent-green)">MSDOS_C_250MB.IMG</b></span>
+                        </div>
+
+                        <div class="crt-knobs-group">
+                            <div class="knob-item">
+                                <label>Phosphor:</label>
+                                <select id="crt-mode-select" class="retro-select" style="padding:3px 6px;">
+                                    <option value="crt">Color CRT + Scanlines</option>
+                                    <option value="green">IBM 5151 Green Phosphor</option>
+                                    <option value="amber">Amber Monochrome CRT</option>
+                                    <option value="mono">Paper-White Monochrome</option>
+                                    <option value="crisp">Crisp Raw Digital</option>
+                                </select>
+                            </div>
+
+                            <div class="knob-item">
+                                <span>☀️</span>
+                                <input type="range" id="crt-brightness" min="0.5" max="1.5" step="0.05" value="1.0" title="CRT Brightness">
+                            </div>
+
+                            <div class="knob-item">
+                                <span>◐</span>
+                                <input type="range" id="crt-contrast" min="0.6" max="1.6" step="0.05" value="1.0" title="CRT Contrast">
+                            </div>
+
+                            <button id="btn-degauss" title="Degauss CRT Coil">🧲 Degauss</button>
+                            <button id="btn-fullscreen" title="Fullscreen Monitor">⛶ Fullscreen</button>
+                            <button id="btn-crt-power" class="btn-power-switch active">
+                                <span id="crt-power-led" class="led active" style="--led-on:#00ff66; margin-right:4px;"></span> PWR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Keyboard & Action Bar -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; align-items:center;">
+                    <span style="font-size:11px; color:var(--text-muted);">Quick Keys & DOS Commands:</span>
+                    <button class="btn-small" onclick="window.retro486App.typeDosText('a:\n');">A:</button>
+                    <button class="btn-small" onclick="window.retro486App.typeDosText('b:\n');">B:</button>
+                    <button class="btn-small" onclick="window.retro486App.typeDosText('c:\n');">C:</button>
+                    <button class="btn-small" onclick="window.retro486App.typeDosText('dir\n');">DIR</button>
+                    <button class="btn-small" onclick="window.retro486App.typeDosText('ver\n');">VER</button>
+                    <button class="btn-small" onclick="window.retro486App.typeDosText('mem\n');">MEM</button>
+                    <button class="btn-small" onclick="window.retro486App.typeDosText('cls\n');">CLS</button>
+                    <button class="btn-small" onclick="window.retro486App.monitorView.sendQuickKey('Escape');">ESC</button>
+                    <button class="btn-small" onclick="window.retro486App.monitorView.sendQuickKey('Enter');">ENTER</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             TAB 2: INTERACTIVE SOCKET 3 MOTHERBOARD VIEW
+             ================================================================ -->
+        <section id="tab-motherboard" class="tab-pane">
+            <div class="motherboard-layout-grid">
+
+                <!-- Left: Socket 3 486 Motherboard PCB -->
+                <div id="motherboard-pcb" class="motherboard-pcb">
+                    <div class="pcb-silkscreen-header">
+                        <span><b>ASUS / OPTi-495SX SOCKET 3 VLB/ISA MOTHERBOARD REV 2.4</b></span>
+                        <div>
+                            <label style="font-size:11px;">Solder Mask:</label>
+                            <select id="mb-pcb-theme" class="retro-select" style="padding:2px 6px; font-size:11px;">
+                                <option value="green">Classic Solder Green</option>
+                                <option value="amber">Vintage Industrial Gold</option>
+                                <option value="stealth">Stealth Black</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Upper PCB Deck: CPU Socket 3, SIMM RAM Banks, BIOS & Chipset -->
+                    <div class="pcb-upper-deck">
+                        <!-- Socket 3 i486 CPU -->
+                        <div class="cpu-socket3" title="Click System Tab to inspect 32-bit i486 registers">
+                            <div class="cpu-ceramic-package">
+                                <div class="cpu-die-label">Intel i486™</div>
+                                <div style="font-size:12px; font-weight:bold; color:#fff;">DX2-66 MHz</div>
+                                <div class="cpu-sub-label" style="margin-top:6px;">SOCKET 3 PGA-168</div>
+                                <div class="cpu-sub-label">FPU INTEGRATED</div>
+                            </div>
+                        </div>
+
+                        <!-- 4x 72-Pin SIMM RAM Banks -->
+                        <div class="simm-banks-box">
+                            <div style="font-size:11px; color:#c8e6c9; font-weight:bold; margin-bottom:4px;">72-PIN FPM SIMM RAM BANKS (16 MB TOTAL)</div>
+                            <div class="simm-stick">
+                                <span>SIMM BANK 0: 4MB 60ns</span>
+                                <div class="simm-chips"><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i></div>
+                            </div>
+                            <div class="simm-stick">
+                                <span>SIMM BANK 1: 4MB 60ns</span>
+                                <div class="simm-chips"><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i></div>
+                            </div>
+                            <div class="simm-stick">
+                                <span>SIMM BANK 2: 4MB 60ns</span>
+                                <div class="simm-chips"><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i></div>
+                            </div>
+                            <div class="simm-stick">
+                                <span>SIMM BANK 3: 4MB 60ns</span>
+                                <div class="simm-chips"><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i><i class="simm-ic"></i></div>
+                            </div>
+                        </div>
+
+                        <!-- Chipset, AMI BIOS ROM, Dallas RTC & POST Display -->
+                        <div class="chipset-column">
+                            <div class="ic-chip-box bios-rom">
+                                <b>AMI / SeaBIOS ROM</b><br>
+                                <span>128KB @ 0xE0000</span>
+                            </div>
+                            <div class="ic-chip-box">
+                                <b>OPTi 82C495XLC</b><br>
+                                <span>VLB/ISA Northbridge</span>
+                            </div>
+                            <div class="ic-chip-box">
+                                <b>DALLAS DS12887</b><br>
+                                <span>Real-Time Clock CMOS</span>
+                            </div>
+                            <div class="post-7seg-box" title="Port 0x80 Hex POST Code">
+                                <span style="font-size:10px; color:#ff9999;">PORT 80h POST:</span>
+                                <span id="mb-post-hex" class="seven-seg-digits">FF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lower PCB Deck: 6 Modular Expansion Slots (VLB & ISA) -->
+                    <div style="font-size:11px; color:#c8e6c9; font-weight:bold; margin-bottom:8px;">
+                        EXPANSION BUS SLOTS (CLICK ANY SLOT TO INSPECT, RECONFIGURE JUMPERS, OR SWAP CARDS)
+                    </div>
+                    <div id="mb-expansion-slots" class="expansion-slots-stack">
+                        <!-- Dynamically populated by MotherboardView -->
+                    </div>
+                </div>
+
+                <!-- Right: Slot Card Inspector & Live Bus Telemetry -->
+                <div class="motherboard-side-panel">
+                    <div id="mb-slot-inspector" class="inspector-card">
+                        <!-- Dynamically populated by MotherboardView -->
+                    </div>
+
+                    <!-- Live Bus Signals & Interrupt Matrix -->
+                    <div class="inspector-card">
+                        <div class="inspector-header">
+                            <span class="badge">LIVE BUS</span>
+                            <h4>ISA / VLB Bus Telemetry</h4>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px; background:#0d1117; padding:8px 10px; border-radius:4px;">
+                            <span>ADDR: <b id="mb-addr-bus-hex" style="color:var(--accent-green)">0x000B8000</b></span>
+                            <span>I/O PORT: <b id="mb-io-bus-hex" style="color:var(--accent-amber)">0x0080</b></span>
+                        </div>
+
+                        <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">Control Strobe Lines:</div>
+                        <div class="bus-led-strip">
+                            <div class="bus-led-pill"><span id="led-bus-memr" class="led" style="--led-on:#00ff66"></span> MEMR#</div>
+                            <div class="bus-led-pill"><span id="led-bus-memw" class="led" style="--led-on:#ffaa00"></span> MEMW#</div>
+                            <div class="bus-led-pill"><span id="led-bus-ior" class="led" style="--led-on:#33ccff"></span> IOR#</div>
+                            <div class="bus-led-pill"><span id="led-bus-iow" class="led" style="--led-on:#ff4444"></span> IOW#</div>
+                            <div class="bus-led-pill"><span class="led active" style="--led-on:#00ff66"></span> BCLK 8MHz</div>
+                        </div>
+
+                        <div style="font-size:11px; color:var(--text-muted); margin:12px 0 4px 0;">8259 PIC Hardware Interrupt Lines (IRQ 0 - 15):</div>
+                        <div class="bus-led-strip">
+                            <div class="bus-led-pill"><span id="led-irq-0" class="led"></span> IRQ0 (PIT)</div>
+                            <div class="bus-led-pill"><span id="led-irq-1" class="led"></span> IRQ1 (KBD)</div>
+                            <div class="bus-led-pill"><span id="led-irq-5" class="led" style="--led-on:#ffaa00"></span> IRQ5 (SB16)</div>
+                            <div class="bus-led-pill"><span id="led-irq-6" class="led" style="--led-on:#33ccff"></span> IRQ6 (FDD)</div>
+                            <div class="bus-led-pill"><span id="led-irq-8" class="led"></span> IRQ8 (RTC)</div>
+                            <div class="bus-led-pill"><span id="led-irq-9" class="led"></span> IRQ9 (MPU)</div>
+                            <div class="bus-led-pill"><span id="led-irq-10" class="led" style="--led-on:#ff55ff"></span> IRQ10</div>
+                            <div class="bus-led-pill"><span id="led-irq-12" class="led"></span> IRQ12 (PS/2)</div>
+                            <div class="bus-led-pill"><span id="led-irq-14" class="led" style="--led-on:#00ff66"></span> IRQ14 (IDE1)</div>
+                            <div class="bus-led-pill"><span id="led-irq-15" class="led"></span> IRQ15 (IDE2)</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================================================================
+             TAB 3: STORAGE BAY (FLOPPY, CD-ROM, HARD DRIVE MANAGER)
+             ================================================================ -->
+        <section id="tab-storage" class="tab-pane">
+            <div class="storage-layout-grid">
+
+                <!-- Left: Physical Drive Bays Tower -->
+                <div class="drive-bays-tower">
+                    <h3 style="font-size:14px; color:var(--accent-green); border-bottom:1px solid #3c434f; padding-bottom:8px;">
+                        💾 Front Panel Drive Bays (Mount, Eject & Export Media)
+                    </h3>
+
+                    <!-- Drive A: 3.5" 1.44MB Floppy -->
+                    <div id="drive-bay-fdd-a" class="drive-bay-unit disk-inserted">
+                        <div class="drive-faceplate-top">
+                            <span>DRIVE A: 3.5" HD Microfloppy (1.44 MB)</span>
+                            <span class="led active" style="--led-on:#ffaa00"></span>
+                        </div>
+                        <div class="floppy-slot-opening"></div>
+                        <div class="drive-controls-row">
+                            <span id="status-fdd-a" class="drive-status-label">FREEDOS_13.IMG</span>
+                            <div style="display:flex; gap:6px;">
+                                <label class="btn-small" style="background:#2b313a; color:#fff; border-radius:4px; cursor:pointer;">
+                                    📂 Mount .IMG <input type="file" id="file-mount-fdd-a" accept=".img,.ima,.flp,.dsk,.bin" style="display:none">
+                                </label>
+                                <button id="btn-export-fdd-a" class="btn-small">⬇️ Save Disk</button>
+                                <button id="btn-eject-fdd-a" class="btn-small btn-danger">⏏️ Eject</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drive B: 5.25" 1.2MB Floppy -->
+                    <div id="drive-bay-fdd-b" class="drive-bay-unit">
+                        <div class="drive-faceplate-top">
+                            <span>DRIVE B: 5.25" High-Density Floppy (1.2 MB)</span>
+                            <span class="led"></span>
+                        </div>
+                        <div class="floppy-slot-opening"></div>
+                        <div class="drive-controls-row">
+                            <span id="status-fdd-b" class="drive-status-label">[Empty / Ejected]</span>
+                            <div style="display:flex; gap:6px;">
+                                <label class="btn-small" style="background:#2b313a; color:#fff; border-radius:4px; cursor:pointer;">
+                                    📂 Mount .IMG <input type="file" id="file-mount-fdd-b" accept=".img,.ima,.flp,.dsk,.bin" style="display:none">
+                                </label>
+                                <button id="btn-eject-fdd-b" class="btn-small btn-danger">⏏️ Eject</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drive E: 5.25" ATAPI CD-ROM Drive -->
+                    <div id="drive-bay-cd-e" class="drive-bay-unit">
+                        <div class="drive-faceplate-top">
+                            <span>DRIVE E: Creative 4X Quad-Speed CD-ROM (ATAPI IDE)</span>
+                            <span class="led" style="--led-on:#00ff66"></span>
+                        </div>
+                        <div class="cdrom-tray-opening">COMPACT DISC DIGITAL DATA</div>
+                        <div class="drive-controls-row">
+                            <span id="status-cd-e" class="drive-status-label">[No Disc]</span>
+                            <div style="display:flex; gap:6px;">
+                                <label class="btn-small" style="background:#2b313a; color:#fff; border-radius:4px; cursor:pointer;">
+                                    💿 Mount .ISO <input type="file" id="file-mount-cd-e" accept=".iso,.bin,.img" style="display:none">
+                                </label>
+                                <button id="btn-eject-cd-e" class="btn-small">⏏️ Load / Eject Tray</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drive C: IDE Hard Disk Primary Master -->
+                    <div id="drive-bay-hdd-c" class="drive-bay-unit hdd-bay">
+                        <div class="drive-faceplate-top">
+                            <span>DRIVE C: Western Digital Caviar IDE Hard Disk (Primary Master)</span>
+                            <span class="led active" style="--led-on:#00ff66"></span>
+                        </div>
+                        <div class="drive-controls-row" style="margin-top:8px;">
+                            <span id="status-hdd-c" class="drive-status-label">MSDOS_C_250MB.IMG (250 MB)</span>
+                            <div style="display:flex; gap:6px;">
+                                <label class="btn-small" style="background:#2b313a; color:#fff; border-radius:4px; cursor:pointer; border:1px solid #455162;">
+                                    📂 Mount HDD .IMG <input type="file" id="file-mount-hdd-c" accept=".img,.vhd,.bin" style="display:none">
+                                </label>
+                                <button id="btn-export-hdd-c" class="btn-small">⬇️ Export HDD Image</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Bundled Disk Library & Blank Disk Creator -->
+                <div class="storage-side-panel">
+                    <div class="inspector-card">
+                        <div class="inspector-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="badge">DISK LIBRARY</span>
+                                <h4>1-Click Bundled & Cached Disks</h4>
+                            </div>
+                            <div style="display:flex; gap:6px;">
+                                <label class="btn-small btn-accent" style="cursor:pointer; border-radius:4px;">
+                                    ➕ Add .IMG(s) to Library <input type="file" id="file-add-library-disks" accept=".img,.ima,.flp,.dsk,.bin" multiple style="display:none">
+                                </label>
+                                <button id="btn-clear-browser-cache" class="btn-small btn-danger" title="Clear cached disk images and reset saved setup">🗑️ Reset Cache</button>
+                            </div>
+                        </div>
+                        <p class="inspector-desc">Select any floppy image to mount into A: or B: (cached automatically in browser storage):</p>
+                        <div id="bundled-disk-list" class="bundled-disk-list">
+                            <!-- Populated by StorageView -->
+                        </div>
+                    </div>
+
+                    <div class="inspector-card">
+                        <div class="inspector-header">
+                            <span class="badge">DISK GENERATOR</span>
+                            <h4>Create Blank Formatted Media</h4>
+                        </div>
+                        <p class="inspector-desc">Generate fresh FAT12 floppy disks or partitioned FAT16 hard drive images right in your browser:</p>
+
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <button id="btn-create-blank-fdd" class="btn-accent">➕ Create & Mount Blank 1.44MB Floppy (A:)</button>
+
+                            <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+                                <select id="select-blank-hdd-size" class="retro-select" style="flex:1;">
+                                    <option value="10">10 MB FAT16 Hard Disk</option>
+                                    <option value="20" selected>20 MB FAT16 Hard Disk</option>
+                                    <option value="64">64 MB FAT16 Hard Disk</option>
+                                    <option value="128">128 MB FAT16 Hard Disk</option>
+                                </select>
+                                <button id="btn-create-blank-hdd">➕ Format New C: Drive</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================================================================
+             TAB 4: IN-BROWSER CUSTOM ADAPTER CARD STUDIO
+             ================================================================ -->
+        <section id="tab-studio" class="tab-pane">
+            <div class="studio-grid">
+
+                <!-- Left: Card Code Editor -->
+                <div class="studio-panel">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                        <div>
+                            <span class="badge">CARD SDK</span>
+                            <strong style="margin-left:6px;">Modular ISA / VLB Adapter Card Builder</strong>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <label style="font-size:12px; color:var(--text-muted);">Template:</label>
+                            <select id="studio-template-select" class="retro-select">
+                                <option value="gpio_led">1. 8-Bit GPIO & LED Register Card (Port 0x300)</option>
+                                <option value="ems_frame">2. LIM EMS 4.0 2MB Expanded Memory Card (0xD0000)</option>
+                                <option value="irq_timer">3. Programmable Hardware IRQ 10 Timer Card (0x310)</option>
+                                <option value="covox_dac">4. Covox Speech Thing 8-Bit Audio DAC (Port 0x378)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <textarea id="studio-code-editor" spellcheck="false"></textarea>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <span id="studio-compile-status" style="font-size:12px;">Ready to build.</span>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <button id="btn-studio-compile">🔨 Verify & Compile</button>
+                            <select id="studio-target-slot" class="retro-select">
+                                <option value="6" selected>Target: Slot 6 (Custom)</option>
+                                <option value="5">Target: Slot 5 (ISA-8)</option>
+                                <option value="4">Target: Slot 4 (ISA-16)</option>
+                                <option value="2">Target: Slot 2 (ISA-16)</option>
+                            </select>
+                            <button id="btn-studio-install" class="btn-accent">🔌 Hot-Plug into Motherboard</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Interactive Hardware Bench Test Harness -->
+                <div class="studio-panel">
+                    <div class="inspector-header">
+                        <span class="badge">TEST BENCH</span>
+                        <h4>Interactive I/O Port & LED Test Harness</h4>
+                    </div>
+                    <p class="inspector-desc">
+                        Test your custom card's I/O port reads, writes, and visual LED indicators directly on the bench before or after plugging it into the motherboard:
+                    </p>
+
+                    <div style="background:#0d1117; padding:12px; border-radius:6px; border:1px solid #28303d; display:flex; flex-direction:column; gap:10px;">
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <label style="font-size:12px; width:90px;">I/O Port (Hex):</label>
+                            <input type="text" id="harness-port-input" value="0x300" style="width:90px;">
+                            <button id="btn-harness-read" style="flex:1;">📥 Execute IN (Read Port)</button>
+                        </div>
+
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <label style="font-size:12px; width:90px;">Write Byte:</label>
+                            <input type="text" id="harness-val-input" value="0x55" style="width:90px;">
+                            <button id="btn-harness-write" class="btn-accent" style="flex:1;">📤 Execute OUT (Write Port)</button>
+                        </div>
+
+                        <div id="harness-log-output" style="background:#050709; color:var(--accent-green); padding:10px; border-radius:4px; font-size:12px; border:1px solid #1f2937;">
+                            Bench ready. Click IN or OUT to probe your card.
+                        </div>
+                    </div>
+
+                    <div style="font-size:12px; font-weight:bold; color:var(--accent-amber); margin-top:8px;">
+                        Card Bracket LEDs & Logic States:
+                    </div>
+                    <div id="harness-visual-leds" class="harness-led-row">
+                        <!-- Dynamically populated by CardStudioView -->
+                    </div>
+
+                    <div style="background:#121720; padding:12px; border-radius:6px; border:1px solid #262f3d; font-size:11px; color:var(--text-muted); line-height:1.5; margin-top:auto;">
+                        <strong style="color:#fff;">💡 Adapter Card API Quick Reference:</strong><br>
+                        • <code>getIOPortHandlers()</code>: Return <code>[{ port, read(addr), write(addr, val) }]</code><br>
+                        • <code>getMemoryWindows()</code>: Return <code>[{ start, end, read(addr), write(addr, val) }]</code><br>
+                        • <code>this.bus.raiseIRQ(n)</code> / <code>this.bus.lowerIRQ(n)</code>: Trigger hardware interrupt<br>
+                        • <code>tick(cycles)</code>: Runs synchronized with CPU instruction clock
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================================================================
+             TAB 5: SYSTEM SPECS, CPU REGISTERS & MEMORY HEX DUMP
+             ================================================================ -->
+        <section id="tab-system" class="tab-pane">
+            <div style="display:flex; flex-direction:column; gap:18px;">
+
+                <!-- Top Control Bar -->
+                <div class="inspector-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:14px;">
+                        <span class="badge">80486DX2 CORE</span>
+                        <span>Speed: <b id="sys-mips-val" style="color:var(--accent-green)">15.00 MIPS</b></span>
+                        <span>Executed: <b id="sys-inst-count">0</b> inst</span>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <label style="font-size:12px;">Clock Multiplier:</label>
+                        <select id="sys-cpu-speed" class="retro-select">
+                            <option value="25000">4.77 MHz (IBM PC XT 8088)</option>
+                            <option value="60000">12 MHz (IBM PC AT 286)</option>
+                            <option value="120000" selected>33 MHz (i486DX-33 Standard)</option>
+                            <option value="240000">66 MHz (i486DX2-66 Turbo)</option>
+                        </select>
+                        <button id="btn-sys-pause">⏸️ Pause CPU</button>
+                        <button id="btn-sys-step" class="btn-accent">⏭️ Step 1 Instruction</button>
+                    </div>
+                </div>
+
+                <!-- 32-Bit Register File -->
+                <div class="inspector-card">
+                    <div class="inspector-header">
+                        <span class="badge">REGISTERS</span>
+                        <h4>Intel 80486 32-Bit General, Segment & Control Registers</h4>
+                    </div>
+                    <div class="reg-grid">
+                        <div class="reg-box"><span>EAX</span> <b id="reg-eax">00000400</b></div>
+                        <div class="reg-box"><span>EBX</span> <b id="reg-ebx">00000000</b></div>
+                        <div class="reg-box"><span>ECX</span> <b id="reg-ecx">00000000</b></div>
+                        <div class="reg-box"><span>EDX</span> <b id="reg-edx">00000000</b></div>
+                        <div class="reg-box"><span>ESI</span> <b id="reg-esi">00000000</b></div>
+                        <div class="reg-box"><span>EDI</span> <b id="reg-edi">00000000</b></div>
+                        <div class="reg-box"><span>ESP</span> <b id="reg-esp">00007C00</b></div>
+                        <div class="reg-box"><span>EBP</span> <b id="reg-ebp">00000000</b></div>
+                        <div class="reg-box"><span>EIP</span> <b id="reg-eip">00007C00</b></div>
+                        <div class="reg-box"><span>EFLAGS</span> <b id="reg-eflags">00000002</b></div>
+                        <div class="reg-box"><span>CS</span> <b id="reg-cs">0000</b></div>
+                        <div class="reg-box"><span>DS</span> <b id="reg-ds">0000</b></div>
+                        <div class="reg-box"><span>SS</span> <b id="reg-ss">0000</b></div>
+                        <div class="reg-box"><span>ES</span> <b id="reg-es">0000</b></div>
+                    </div>
+                </div>
+
+                <!-- Physical Memory Hex Inspector -->
+                <div class="inspector-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="badge">MEMORY BUS</span>
+                            <h4>Physical RAM / VRAM / ROM Hex Inspector</h4>
+                        </div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button class="btn-small btn-mem-jump" data-addr="0x00000">IVT (0x00000)</button>
+                            <button class="btn-small btn-mem-jump" data-addr="0x00400">BDA (0x00400)</button>
+                            <button class="btn-small btn-mem-jump" data-addr="0x07C00">Boot Sector (0x07C00)</button>
+                            <button class="btn-small btn-mem-jump" data-addr="0xA0000">EGA/VGA VRAM (0xA0000)</button>
+                            <button class="btn-small btn-mem-jump" data-addr="0xB8000">Text/CGA VRAM (0xB8000)</button>
+                            <button class="btn-small btn-mem-jump" data-addr="0xD0000">EMS Frame (0xD0000)</button>
+                            <button class="btn-small btn-mem-jump" data-addr="0xFE05B">BIOS ROM (0xFE05B)</button>
+                        </div>
+                    </div>
+                    <pre id="sys-memory-hex-dump" class="hex-dump-box"></pre>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

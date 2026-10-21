@@ -1,0 +1,22 @@
+{
+  "name": "retro486-web",
+  "version": "1.0.0",
+  "description": "Standalone 100% Pure-JavaScript Intel 80486DX2 PC, Motherboard, and Modular ISA/VLB Adapter Card Emulator",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node tests/test_cpu_486.js && node tests/test_adapter_cards.js && node tests/test_storage.js"
+  },
+  "keywords": [
+    "80486",
+    "x86",
+    "emulator",
+    "dos",
+    "freedos",
+    "vga",
+    "soundblaster",
+    "javascript"
+  ],
+  "author": "Jan de Jager <dejager.jc@gmail.com>",
+  "license": "MIT"
+}

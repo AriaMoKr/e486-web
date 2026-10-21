@@ -1,0 +1,394 @@
+/* ==========================================================================
+   Retro486 Socket 3 Motherboard PCB & Expansion Slot Styling
+   ========================================================================== */
+
+.motherboard-layout-grid {
+    display: grid;
+    grid-template-columns: 1.75fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 1020px) {
+    .motherboard-layout-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.motherboard-pcb {
+    background-color: #14492b;
+    background-image:
+        radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 215, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(rgba(255, 215, 0, 0.03) 1px, transparent 1px);
+    background-size: 16px 16px, 32px 32px, 32px 32px;
+    border: 4px solid #c5a03f;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.75),
+        inset 0 0 30px rgba(0, 0, 0, 0.45);
+    position: relative;
+}
+
+.motherboard-pcb.theme-amber {
+    background-color: #5e4315;
+}
+
+.motherboard-pcb.theme-stealth {
+    background-color: #161b22;
+}
+
+.pcb-silkscreen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #e8f5e9;
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   Upper PCB Section: CPU Socket 3, SIMM RAM Banks, BIOS ROM, Chipset
+   ========================================================================== */
+
+.pcb-upper-deck {
+    display: grid;
+    grid-template-columns: 180px 1fr 180px;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 760px) {
+    .pcb-upper-deck {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Socket 3 i486 CPU */
+.cpu-socket3 {
+    background: #d9d2c5;
+    border: 3px solid #aba292;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+
+.cpu-ceramic-package {
+    background: #47384d;
+    border: 3px solid #d4af37;
+    width: 126px;
+    height: 126px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #f3e5ab;
+    padding: 8px;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.7);
+}
+
+.cpu-die-label {
+    font-size: 13px;
+    font-weight: bold;
+    border-bottom: 1px solid #d4af37;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+}
+
+.cpu-sub-label {
+    font-size: 10px;
+    color: #ddd;
+}
+
+/* SIMM RAM Banks */
+.simm-banks-box {
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px dashed rgba(255, 255, 255, 0.35);
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.simm-stick {
+    background: linear-gradient(90deg, #1b5e20, #2e7d32);
+    border: 1px solid #e0e0e0;
+    border-left: 5px solid #cfd8dc;
+    border-right: 5px solid #cfd8dc;
+    padding: 5px 10px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.simm-chips {
+    display: flex;
+    gap: 4px;
+}
+
+.simm-ic {
+    width: 12px;
+    height: 14px;
+    background: #1a1a1a;
+    border: 1px solid #555;
+    display: inline-block;
+}
+
+/* Chipset, BIOS ROM & RTC */
+.chipset-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ic-chip-box {
+    background: #181a1c;
+    border: 2px solid #555;
+    border-radius: 4px;
+    padding: 8px;
+    color: #d0d7de;
+    font-size: 11px;
+    text-align: center;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+}
+
+.ic-chip-box.bios-rom {
+    background: linear-gradient(135deg, #2b2212, #1a150b);
+    border-color: #d4af37;
+    color: #ffd700;
+}
+
+.post-7seg-box {
+    background: #120606;
+    border: 2px solid #6b1d1d;
+    border-radius: 4px;
+    padding: 6px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.seven-seg-digits {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ff2222;
+    text-shadow: 0 0 10px #ff0000;
+    letter-spacing: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+/* ==========================================================================
+   Expansion Slots (ISA-8, ISA-16, VESA Local Bus)
+   ========================================================================== */
+
+.expansion-slots-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.expansion-slot {
+    background: rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.expansion-slot:hover {
+    border-color: #ffd700;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.expansion-slot.selected {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 14px rgba(0, 255, 102, 0.3);
+}
+
+.expansion-slot.vlb-slot {
+    border-left: 6px solid #a1622f;
+}
+
+.slot-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #c8e6c9;
+    margin-bottom: 6px;
+}
+
+.slot-bus-badge {
+    background: #1c242b;
+    color: #ffd700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid #6e5a23;
+}
+
+.inserted-card-pcb {
+    border: 2px solid #99823c;
+    border-radius: 5px;
+    padding: 8px 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.card-edge-bracket {
+    width: 8px;
+    height: 44px;
+    background: linear-gradient(180deg, #d0d5dd, #8a93a2);
+    border-radius: 2px;
+}
+
+.card-body-content {
+    flex: 1;
+}
+
+.card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #fff;
+    margin-bottom: 6px;
+}
+
+.card-leds {
+    display: flex;
+    gap: 10px;
+    font-size: 11px;
+}
+
+.card-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.card-chip {
+    background: #16181d;
+    color: #b0bac5;
+    border: 1px solid #484f58;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.empty-slot-socket {
+    background: #111315;
+    border: 2px inset #2c3136;
+    padding: 10px;
+    text-align: center;
+    color: #7d8590;
+    font-size: 12px;
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   Right Column: Slot Inspector & Live Bus Telemetry Panel
+   ========================================================================== */
+
+.motherboard-side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.inspector-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.inspector-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.inspector-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.inspector-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    background: #0d1117;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #262c36;
+}
+
+.inspector-specs div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.inspector-specs span {
+    color: var(--text-muted);
+}
+
+.inspector-section-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--accent-amber);
+    margin: 14px 0 8px 0;
+}
+
+.jumper-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.jumper-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+}
+
+.bus-led-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.bus-led-pill {
+    background: #0d1117;
+    border: 1px solid #282f3a;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
