@@ -21,6 +21,7 @@ import { PcSpeakerCard } from './cards/pcspeaker_card.js';
 import { MultiIOCard } from './cards/multio_card.js';
 import { PostDiagnosticCard } from './cards/post_card.js';
 import { Mpu401Card } from './cards/mpu401_card.js';
+import { Ne2000Card } from './cards/ne2000_card.js';
 
 import { MonitorView } from './ui/monitor_view.js';
 import { MotherboardView } from './ui/motherboard_view.js';
@@ -95,10 +96,10 @@ export class Retro486App {
         spk.cardTypeId = 'pcspeaker';
         this.bus.installCard(5, spk);
 
-        // Slot 6: Roland MPU-401 MIDI Interface (or ready for Custom User Card)
-        const mpu = new Mpu401Card();
-        mpu.cardTypeId = 'mpu401';
-        this.bus.installCard(6, mpu);
+        // Slot 6: Novell NE2000 16-bit ISA Ethernet Adapter Card
+        const nic = new Ne2000Card();
+        nic.cardTypeId = 'ne2000';
+        this.bus.installCard(6, nic);
     }
 
     getAvailableCardCatalog() {
@@ -110,6 +111,7 @@ export class Retro486App {
             { typeId: 'mpu401', name: 'Roland MPU-401 MIDI Interface', slotType: 'ISA-8', category: 'Audio' },
             { typeId: 'pcspeaker', name: 'IBM PC Internal Speaker Module', slotType: 'ISA-8', category: 'Audio' },
             { typeId: 'multio', name: 'GoldStar Prime 2C Multi-I/O (IDE/Floppy)', slotType: 'ISA-16', category: 'Storage' },
+            { typeId: 'ne2000', name: 'Novell NE2000 Ethernet Adapter (10BASE-T)', slotType: 'ISA-16', category: 'Network' },
             { typeId: 'post', name: 'ISA Dual 7-Segment POST Diagnostic Card', slotType: 'ISA-8', category: 'Diagnostic' }
         ];
 
@@ -133,6 +135,7 @@ export class Retro486App {
             case 'mpu401': card = new Mpu401Card(); break;
             case 'pcspeaker': card = new PcSpeakerCard(); break;
             case 'multio': card = new MultiIOCard(); break;
+            case 'ne2000': card = new Ne2000Card(); break;
             case 'post': card = new PostDiagnosticCard(); break;
             default:
                 if (typeId.startsWith('custom_')) {

@@ -43,7 +43,7 @@ export class MotherboardView {
             { num: 3, type: 'ISA-16',       label: 'SLOT 3 (16-BIT ISA)' },
             { num: 4, type: 'ISA-16',       label: 'SLOT 4 (16-BIT ISA)' },
             { num: 5, type: 'ISA-8',        label: 'SLOT 5 (8-BIT ISA)' },
-            { num: 6, type: 'ISA-16',       label: 'SLOT 6 (PROTOTYPE / CUSTOM)' }
+            { num: 6, type: 'ISA-16',       label: 'SLOT 6 (NE2000 ETHERNET LAN / ISA-16)' }
         ];
 
         slotsContainer.innerHTML = '';
